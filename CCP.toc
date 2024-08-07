@@ -1,0 +1,7 @@
+## Interface: 11200
+## Title: |cffeda55fCompanions|r Control Panel
+## Notes: Companions Control Panel for the NycterMoon server.
+## Author: Leontiesh (Ace)
+
+CCP.lua
+CCP.xml

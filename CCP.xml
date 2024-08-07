@@ -1,0 +1,3193 @@
+<!-- Companions Control Panel addon by Leontiesh (Ace) and WZ -->
+<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
+
+	<Script file="CCP.lua" />
+	<Frame name="CCPButtonFrame" parent="Minimap" enableMouse="true" hidden="false" frameStrata="LOW">
+		<Size>
+			<AbsDimension x="32" y="32" />
+		</Size>
+		<Anchors>
+			<Anchor point="TOP" relativeTo="Minimap" relativePoint="TOP">
+				<Offset>
+					<AbsDimension x="0" y="0" />
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Frames>
+			<Button name="AtlasButton">
+				<Size>
+					<AbsDimension x="24" y="24" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOP" >
+						<Offset>
+							<AbsDimension x="0" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<NormalTexture file="Interface\AddOns\CCP\img\NyctermoonIcon" />
+				<PushedTexture file="Interface\AddOns\CCP\img\NyctermoonIcon" />
+				<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight" />
+				<Scripts>
+					<OnLoad>
+						this:RegisterForDrag("RightButton");
+						this.dragme = false;
+					</OnLoad>
+					<OnDragStart>
+						this.dragme = true;
+					</OnDragStart>
+					<OnDragStop>
+						this.dragme = false;
+					</OnDragStop>
+					<OnUpdate>
+						if(this.dragme == true) then
+						CCPButtonFrame_BeingDragged();
+						end
+					</OnUpdate>
+					<OnClick>
+						CCPButtonFrame_OnClick();
+					</OnClick>
+					<OnEnter>
+						CCPButtonFrame_OnEnter();
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide();
+					</OnLeave>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				<!-- this:RegisterForDrag("RightButton"); -->
+			</OnLoad>
+			<OnEvent>
+				<!-- CCPButtonFrame_Init(); -->
+				<!-- CCPButtonFrame_UpdatePosition(); -->
+			</OnEvent>
+		</Scripts>
+	</Frame>
+		
+	<Frame name="CCPFrame" parent="UIParent" toplevel="true" enableMouse="true" movable="true">
+
+		<Scripts>
+			<OnLoad>CCPFrame:RegisterForDrag("LeftButton");CCPFrame:Hide();this:RegisterEvent("PLAYER_LOGIN");</OnLoad>
+			<OnDragStart>CCPFrame:StartMoving();</OnDragStart>
+			<OnDragStop>CCPFrame:StopMovingOrSizing();</OnDragStop>
+			<OnEvent>JoinWorld();</OnEvent>
+		</Scripts>
+
+		<Size x="240" y="700" />
+
+		<Anchors>
+			<Anchor point="TOP">
+				<Offset>
+					<AbsDimension x="0" y="-40" />
+				</Offset>
+			</Anchor>
+		</Anchors>
+
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border"  tile="true">
+			<BackgroundInsets>
+				<AbsInset left="12" right="12" top="12" bottom="12" />
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="32" />
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="40" />
+			</EdgeSize>			
+			<Color r = "0" g = "0" b = "0" a = "100" />				
+		</Backdrop>
+
+		<!-- overlay labels layer for below buttons frame-->
+
+		<Layers>
+			<!-- string for buttons -->
+			<Layer level="OVERLAY">
+
+				<FontString name="ControlPanel" inherits="GameFontHighlightLarge" text="Companions Control Panel">
+					<Size x="220" y="20" />
+					<Anchors>
+						<Anchor  point="CENTER" relativePoint="TOP">
+							<Offset>
+								<AbsDimension x="0" y="10" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="AddCustomBot" inherits="GameFontNormal" text="Companion Configurator">
+					<Size x="220" y="20" />
+					<Anchors>
+						<Anchor  point="CENTER" relativePoint="TOP">
+							<Offset>
+								<AbsDimension x="0" y="-30" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="partybotaddbyrole" inherits="GameFontNormal" text="Add Companion by role">
+					<Size x="220" y="20" />
+					<Anchors>
+						<Anchor  point="CENTER" relativePoint="TOP">
+							<Offset>
+								<AbsDimension x="0" y="-230" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="partybottargetbot" inherits="GameFontNormal" text="Set Target Companion">
+					<Size x="220" y="20" />
+					<Anchors>
+						<Anchor  point="CENTER" relativePoint="TOP">
+							<Offset>
+								<AbsDimension x="0" y="-280" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="commands" inherits="ErrorFont" text="Commands">
+					<Size x="220" y="20" />
+					<Anchors>
+						<Anchor  point="CENTER" relativePoint="TOP">
+							<Offset>
+								<AbsDimension x="0" y="-340" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="markconfiguration" inherits="GameFontNormal" text="Mark Configurator">
+					<Size x="220" y="20" />
+					<Anchors>
+						<Anchor  point="CENTER" relativePoint="TOP">
+							<Offset>
+								<AbsDimension x="0" y="-560" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="version" inherits="GameFontHighlightSmallOutline" text="v3.3c">
+					<Size x="220" y="20" />
+					<Anchors>
+						<Anchor point="CENTER" relativePoint="BOTTOMRIGHT">
+							<Offset>
+								<AbsDimension x="-35" y="25" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+
+		<!-- buttons frame -->
+
+		<Frames>
+
+			<Button name="AddCustomBot" inherits="UIPanelButtonTemplate" text="Add Companion">
+				<Size x="150" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-190" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SubPartyBotAddAdvanced();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<!-- Class Stack -->
+
+			<Button name="SetClassADD" inherits="UIPanelButtonTemplate" text="+">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="58" y="-40" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetClassADD();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="SetClassSUB" inherits="UIPanelButtonTemplate" text="-">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-58" y="-40" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetClassSUB();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="warrior" inherits="UIPanelButtonTemplate" text="Warrior">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-40" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="paladin" inherits="UIPanelButtonTemplate" text="Paladin">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-40" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						paladin:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="hunter" inherits="UIPanelButtonTemplate" text="Hunter">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-40" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						hunter:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="rogue" inherits="UIPanelButtonTemplate" text="Rogue">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-40" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						rogue:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="priest" inherits="UIPanelButtonTemplate" text="Priest">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-40" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						priest:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="shaman" inherits="UIPanelButtonTemplate" text="Shaman">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-40" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						shaman:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="mage" inherits="UIPanelButtonTemplate" text="Mage">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-40" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						mage:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="warlock" inherits="UIPanelButtonTemplate" text="Warlock">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-40" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						warlock:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="druid" inherits="UIPanelButtonTemplate" text="Druid">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-40" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						druid:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<!-- Role Stack -->
+
+			<Button name="SetRoleADD" inherits="UIPanelButtonTemplate" text="+">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="58" y="-70" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetRoleADD();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="SetRoleSUB" inherits="UIPanelButtonTemplate" text="-">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-58" y="-70" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetRoleSUB();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="tank" inherits="UIPanelButtonTemplate" text="Tank">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-70" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="healer" inherits="UIPanelButtonTemplate" text="Healer">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-70" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						healer:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="meleedps" inherits="UIPanelButtonTemplate" text="M.DPS">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-70" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						meleedps:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="rangedps" inherits="UIPanelButtonTemplate" text="R.DPS">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-70" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						rangedps:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<!-- Role Stack -->
+			
+			<!-- Spec Stack -->
+
+			<Button name="SetSpecADD" inherits="UIPanelButtonTemplate" text="+">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="58" y="-100" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetSpecADD();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="SetSpecSUB" inherits="UIPanelButtonTemplate" text="-">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-58" y="-100" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetSpecSUB();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="spec" inherits="UIPanelButtonTemplate" text="[Spec]">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-100" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Button>
+
+			<Button name="arcane" inherits="UIPanelButtonTemplate" text="Arcane">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-100" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						arcane:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+	
+			<Button name="fire" inherits="UIPanelButtonTemplate" text="Fire">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-100" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						fire:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+	
+			<Button name="frost" inherits="UIPanelButtonTemplate" text="Frost">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-100" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						frost:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+	
+			<Button name="might" inherits="UIPanelButtonTemplate" text="Might">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-100" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						might:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+	
+			<Button name="magic" inherits="UIPanelButtonTemplate" text="Magic">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-100" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						magic:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+	
+			<!-- Spec Stack -->
+			
+			<!-- Race Stack -->
+
+			<Button name="SetRaceADD" inherits="UIPanelButtonTemplate" text="+">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="58" y="-130" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetRaceADD();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="SetRaceSUB" inherits="UIPanelButtonTemplate" text="-">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-58" y="-130" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetRaceSUB();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="race" inherits="UIPanelButtonTemplate" text="[Race]">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-130" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Button>
+
+			<Button name="human" inherits="UIPanelButtonTemplate" text="Human">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-130" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						human:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="dwarf" inherits="UIPanelButtonTemplate" text="Dwarf">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-130" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						dwarf:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="nightelf" inherits="UIPanelButtonTemplate" text="Night Elf">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-130" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						nightelf:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="gnome" inherits="UIPanelButtonTemplate" text="Gnome">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-130" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						gnome:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="orc" inherits="UIPanelButtonTemplate" text="Orc">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-130" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						orc:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="undead" inherits="UIPanelButtonTemplate" text="Undead">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-130" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						undead:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="tauren" inherits="UIPanelButtonTemplate" text="Tauren">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-130" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						tauren:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="troll" inherits="UIPanelButtonTemplate" text="Troll">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-130" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						troll:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<!-- Race Stack -->
+	
+			<!-- Gender Stack -->
+
+			<Button name="SetGenderADD" inherits="UIPanelButtonTemplate" text="+">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="58" y="-160" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetGenderADD();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="SetGenderSUB" inherits="UIPanelButtonTemplate" text="-">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-58" y="-160" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetGenderSUB();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="gender" inherits="UIPanelButtonTemplate" text="[Gender]">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-160" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="male" inherits="UIPanelButtonTemplate" text="Male">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-160" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						male:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="female" inherits="UIPanelButtonTemplate" text="Female">
+				<Size x="80" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-160" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						female:Hide()
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<!-- Add bot by role -->
+
+			<Button name="PartyBotAddTank" inherits="UIPanelButtonTemplate" text="Tank">
+				<Size x="50" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-75" y="-240" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SubPartyBotAdd(self, "tank");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotAddHealer" inherits="UIPanelButtonTemplate" text="Healer">
+				<Size x="50" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-25" y="-240" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SubPartyBotAdd(self, "healer");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotAddDPS" inherits="UIPanelButtonTemplate" text="DPS">
+				<Size x="50" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="25" y="-240" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SubPartyBotAdd(self, "dps");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotClone" inherits="UIPanelButtonTemplate" text="Clone">
+				<Size x="50" y="30" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="75" y="-240" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SubPartyBotClone(self);
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<!-- Target -->
+
+			<Button name="PartyBotSetTank" inherits="UIPanelButtonTemplate" text="Tank">
+				<Size x="50" y="30" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="-75" y="-290" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SubPartyBotSetRole("tank");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotSetHealer" inherits="UIPanelButtonTemplate" text="Healer">
+				<Size x="50" y="30" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="-25" y="-290" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SubPartyBotSetRole("healer");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotSetMDPS" inherits="UIPanelButtonTemplate" text="M.DPS">
+				<Size x="50" y="30" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="25" y="-290" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SubPartyBotSetRole("mdps");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotSetRDPS" inherits="UIPanelButtonTemplate" text="R.DPS">
+				<Size x="50" y="30" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="75" y="-290" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SubPartyBotSetRole("rdps");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<!-- Commands start -->
+
+			<CheckButton name="CmdInclude" inherits="UICheckButtonTemplate" checked="true">
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-85" y="-355"></AbsDimension>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						SetCmdCheckmark();
+					</OnLoad>
+					<OnClick>
+						ChangeCmdCheckmark();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<Button name="SetCommandSUB" inherits="UIPanelButtonTemplate" text="-">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-52" y="-355" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						CmdSUB();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="SetCommandADD" inherits="UIPanelButtonTemplate" text="+">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="52" y="-355" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						CmdADD();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdAll" inherits="UIPanelButtonTemplate" text="{ All }">
+				<Size x="70" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-355" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Button>
+
+			<Button name="CmdTank" inherits="UIPanelButtonTemplate" text="Tank">
+				<Size x="70" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-355" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdTank:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdHealer" inherits="UIPanelButtonTemplate" text="Healer">
+				<Size x="70" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-355" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdHealer:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdDPS" inherits="UIPanelButtonTemplate" text="DPS">
+				<Size x="70" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-355" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdDPS:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdMDPS" inherits="UIPanelButtonTemplate" text="M.DPS">
+				<Size x="70" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-355" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdMDPS:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdRDPS" inherits="UIPanelButtonTemplate" text="R.DPS">
+				<Size x="70" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-355" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdRDPS:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdWarrior" inherits="UIPanelButtonTemplate" text="Warrior">
+				<Size x="70" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-355" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdWarrior:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdPaladin" inherits="UIPanelButtonTemplate" text="Paladin">
+				<Size x="70" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-355" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdPaladin:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdHunter" inherits="UIPanelButtonTemplate" text="Hunter">
+				<Size x="70" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-355" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdHunter:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdRogue" inherits="UIPanelButtonTemplate" text="Rogue">
+				<Size x="70" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-355" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdRogue:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdPriest" inherits="UIPanelButtonTemplate" text="Priest">
+				<Size x="70" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-355" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdPriest:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdShaman" inherits="UIPanelButtonTemplate" text="Shaman">
+				<Size x="70" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-355" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdShaman:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdMage" inherits="UIPanelButtonTemplate" text="Mage">
+				<Size x="70" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-355" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdMage:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdWarlock" inherits="UIPanelButtonTemplate" text="Warlock">
+				<Size x="70" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-355" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdWarlock:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdDruid" inherits="UIPanelButtonTemplate" text="Druid">
+				<Size x="70" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-355" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdDruid:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdCome" inherits="UIPanelButtonTemplate" text="Come">
+				<Size x="65" y="30" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="-65" y="-390" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("come");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdComeStay" inherits="UIPanelButtonTemplate" text="Come-S">
+				<Size x="65" y="30" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-390" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("comestay");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdComeToggle" inherits="UIPanelButtonTemplate" text="Come-T">
+				<Size x="65" y="30" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="65" y="-390" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("cometoggle");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdPull" inherits="UIPanelButtonTemplate" text="Pull">
+				<Size x="65" y="30" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-420" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("pull");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdPullBack" inherits="UIPanelButtonTemplate" text="Pull-B">
+				<Size x="65" y="30" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="65" y="-420" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("pull back");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdStay" inherits="UIPanelButtonTemplate" text="Stay">
+				<Size x="65" y="30" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="-65" y="-420" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("stay");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdPause" inherits="UIPanelButtonTemplate" text="Pause">
+				<Size x="65" y="30" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-480" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetPause();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdUnpause" inherits="UIPanelButtonTemplate" text="Unpause">
+				<Size x="65" y="30" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="65" y="-480" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetUnpause();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdStart" inherits="UIPanelButtonTemplate" text="Start">
+				<Size x="65" y="30" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="65" y="-450" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("start");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdStop" inherits="UIPanelButtonTemplate" text="Stop">
+				<Size x="65" y="30" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-450" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("stop");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdAOE" inherits="UIPanelButtonTemplate" text="AoE">
+				<Size x="65" y="30" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="-65" y="-450" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("aoe");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdUse" inherits="UIPanelButtonTemplate" text="Use">
+				<Size x="65" y="30" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="-65" y="-480" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("use");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="ToggleSUB" inherits="UIPanelButtonTemplate" text="-">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-82" y="-510" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ToggleSUB();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="ToggleADD" inherits="UIPanelButtonTemplate" text="+">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="17" y="-510" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ToggleADD();
+					</OnClick>
+				</Scripts>
+			</Button>
+			
+			<Button name="ToggleMode" inherits="UIPanelButtonTemplate" text="Mode">
+				<Size x="68" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-32" y="-510" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Button>
+
+			<Button name="ToggleAOE" inherits="UIPanelButtonTemplate" text="AoE">
+				<Size x="68" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-32" y="-510" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						ToggleAOE:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="ToggleTotems" inherits="UIPanelButtonTemplate" text="Totems">
+				<Size x="68" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-32" y="-510" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						ToggleTotems:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="helm" inherits="UIPanelButtonTemplate" text="Helm">
+				<Size x="68" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-32" y="-510" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						helm:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="cloak" inherits="UIPanelButtonTemplate" text="Cloak">
+				<Size x="68" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-32" y="-510" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						cloak:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdToggle" inherits="UIPanelButtonTemplate" text="Toggle">
+				<Size x="65" y="30" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="65" y="-510" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetToggle();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<!-- Commands end -->
+
+			<!-- mark configuration -->
+
+			<Button name="SetMarkADD" inherits="UIPanelButtonTemplate" text="+">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="64" y="-575" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						MarkADD();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="SetMarkSUB" inherits="UIPanelButtonTemplate" text="-">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-64" y="-575" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						MarkSUB();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="ccmark" inherits="UIPanelButtonTemplate" text="CC Mark">
+				<Size x="95" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-575" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ShowMark();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="focusmark" inherits="UIPanelButtonTemplate" text="Focus Mark">
+				<Size x="95" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-575" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						focusmark:Hide();
+					</OnLoad>
+					<OnClick>
+						ShowMark();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotCCMoon" inherits="UIPanelButtonTemplate" text="Moon">
+				<Size x="40" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-80" y="-605" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetMark(self, "moon");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotCCStar" inherits="UIPanelButtonTemplate" text="Star">
+				<Size x="40" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-40" y="-605" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetMark(self, "star");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotCCCircle" inherits="UIPanelButtonTemplate" text="Circle">
+				<Size x="40" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-605" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetMark(self, "circle");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotCCDiamond" inherits="UIPanelButtonTemplate" text="Diamd">
+				<Size x="40" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="40" y="-605" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetMark(self, "diamond");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotCCTriangle" inherits="UIPanelButtonTemplate" text="Trian">
+				<Size x="40" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-80" y="-635" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetMark(self, "triangle");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotCCSquare" inherits="UIPanelButtonTemplate" text="Sqre">
+				<Size x="40" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-40" y="-635" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetMark(self, "square");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBoCCCross" inherits="UIPanelButtonTemplate" text="Cross">
+				<Size x="40" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-635" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetMark(self, "cross");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotCCSkull" inherits="UIPanelButtonTemplate" text="Skull">
+				<Size x="40" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="40" y="-635" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetMark(self, "skull");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotCCDiamond" inherits="UIPanelButtonTemplate" text="Clear">
+				<Size x="40" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="80" y="-605" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ClearMark();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotCCSkull" inherits="UIPanelButtonTemplate" text="Clear!">
+				<Size x="40" y="30" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="80" y="-635" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ClearAllMark();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<!--  bottom close button -->
+
+			<Button name="CloseButton" inherits="UIPanelButtonTemplate" text="Close">
+				<Size x="50" y="30" />
+				<Anchors>
+					<Anchor point="BOTTOM">
+						<Offset>
+							<AbsDimension x="-25" y="-5" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						CloseFrame();
+					</OnClick>
+				</Scripts>
+			</Button>
+			
+			<!--  frame change button -->
+
+			<Button name="FrameButton" inherits="UIPanelButtonTemplate" text="Mini UI">
+				<Size x="50" y="30" />
+				<Anchors>
+					<Anchor point="BOTTOM">
+						<Offset>
+							<AbsDimension x="25" y="-5" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ChangeFrame();
+					</OnClick>
+				</Scripts>
+			</Button>
+			
+		</Frames>
+	</Frame>
+		
+	<Frame name="CCPFrameMini" parent="UIParent" toplevel="true" enableMouse="true" movable="true">
+
+		<Scripts>
+			<OnLoad>CCPFrameMini:RegisterForDrag("LeftButton");CCPFrameMini:Hide();this:RegisterEvent("PLAYER_LOGIN");</OnLoad>
+			<OnDragStart>CCPFrameMini:StartMoving();</OnDragStart>
+			<OnDragStop>CCPFrameMini:StopMovingOrSizing();</OnDragStop>
+		</Scripts>
+
+		<Size x="230" y="333" />
+
+		<Anchors>
+			<Anchor point="TOP">
+				<Offset>
+					<AbsDimension x="0" y="-40" />
+				</Offset>
+			</Anchor>
+		</Anchors>
+
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border"  tile="true">
+			<BackgroundInsets>
+				<AbsInset left="12" right="12" top="12" bottom="12" />
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="32" />
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="40" />
+			</EdgeSize>			
+			<Color r = "0" g = "0" b = "0" a = "100" />				
+		</Backdrop>
+
+		<!-- overlay labels layer for below buttons frame-->
+
+		<Layers>
+			<!-- string for buttons -->
+			<Layer level="OVERLAY">
+								
+				<FontString name="ControlPanel" inherits="GameFontHighlight" text="Companions Control Panel">
+					<Size x="220" y="10" />
+					<Anchors>
+						<Anchor  point="CENTER" relativePoint="TOP">
+							<Offset>
+								<AbsDimension x="0" y="2" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				
+				<FontString name="partybottargetbot" inherits="GameFontNormal" text="Set Target Companion">
+					<Size x="220" y="20" />
+					<Anchors>
+						<Anchor  point="CENTER" relativePoint="TOP">
+							<Offset>
+								<AbsDimension x="0" y="-20" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				
+				<FontString name="commands" inherits="GameFontNormal" text="Commands">
+					<Size x="220" y="20" />
+					<Anchors>
+						<Anchor  point="CENTER" relativePoint="TOP">
+							<Offset>
+								<AbsDimension x="0" y="-62" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="markconfiguration" inherits="GameFontNormal" text="Mark Configurator">
+					<Size x="220" y="20" />
+					<Anchors>
+						<Anchor  point="CENTER" relativePoint="TOP">
+							<Offset>
+								<AbsDimension x="0" y="-225" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				
+				<FontString name="version_mini" inherits="GameFontHighlightSmallOutline" text="v3.3c">
+					<Size x="50" y="20" />
+					<Anchors>
+						<Anchor point="BOTTOM">
+							<Offset>
+								<AbsDimension x="83" y="9" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				
+			</Layer>
+		</Layers>
+		
+		<!-- buttons frame -->
+
+		<Frames>
+			<Button name="PartyBotSetTank" inherits="UIPanelButtonTemplate" text="Tank">
+				<Size x="50" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="-75" y="-29" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SubPartyBotSetRole("tank");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotSetHealer" inherits="UIPanelButtonTemplate" text="Healer">
+				<Size x="50" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="-25" y="-29" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SubPartyBotSetRole("healer");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotSetMDPS" inherits="UIPanelButtonTemplate" text="M.DPS">
+				<Size x="50" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="25" y="-29" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SubPartyBotSetRole("mdps");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotSetRDPS" inherits="UIPanelButtonTemplate" text="R.DPS">
+				<Size x="50" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="75" y="-29" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SubPartyBotSetRole("rdps");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<!-- Commands start -->
+
+			<CheckButton name="CmdInclude_mini" inherits="UICheckButtonTemplate" checked="true">
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-83" y="-67"></AbsDimension>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						SetCmdCheckmark();
+					</OnLoad>
+					<OnClick>
+						ChangeCmdCheckmark_mini();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<Button name="SetCommandSUB" inherits="UIPanelButtonTemplate" text="-">
+				<Size x="30" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-52" y="-69" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						CmdSUB();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="SetCommandADD" inherits="UIPanelButtonTemplate" text="+">
+				<Size x="30" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="52" y="-69" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						CmdADD();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdAll_mini" inherits="UIPanelButtonTemplate" text="{ All }">
+				<Size x="70" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-69" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Button>
+
+			<Button name="CmdTank_mini" inherits="UIPanelButtonTemplate" text="Tank">
+				<Size x="70" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-69" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdTank_mini:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdHealer_mini" inherits="UIPanelButtonTemplate" text="Healer">
+				<Size x="70" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-69" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdHealer_mini:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdDPS_mini" inherits="UIPanelButtonTemplate" text="DPS">
+				<Size x="70" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-69" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdDPS_mini:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdMDPS_mini" inherits="UIPanelButtonTemplate" text="M.DPS">
+				<Size x="70" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-69" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdMDPS_mini:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdRDPS_mini" inherits="UIPanelButtonTemplate" text="R.DPS">
+				<Size x="70" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-69" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdRDPS_mini:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdWarrior_mini" inherits="UIPanelButtonTemplate" text="Warrior">
+				<Size x="70" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-69" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdWarrior_mini:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdPaladin_mini" inherits="UIPanelButtonTemplate" text="Paladin">
+				<Size x="70" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-69" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdPaladin_mini:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdHunter_mini" inherits="UIPanelButtonTemplate" text="Hunter">
+				<Size x="70" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-69" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdHunter_mini:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdRogue_mini" inherits="UIPanelButtonTemplate" text="Rogue">
+				<Size x="70" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-69" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdRogue_mini:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdPriest_mini" inherits="UIPanelButtonTemplate" text="Priest">
+				<Size x="70" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-69" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdPriest_mini:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdShaman_mini" inherits="UIPanelButtonTemplate" text="Shaman">
+				<Size x="70" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-69" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdShaman_mini:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdMage_mini" inherits="UIPanelButtonTemplate" text="Mage">
+				<Size x="70" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-69" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdMage_mini:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdWarlock_mini" inherits="UIPanelButtonTemplate" text="Warlock">
+				<Size x="70" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-69" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdWarlock_mini:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdDruid_mini" inherits="UIPanelButtonTemplate" text="Druid">
+				<Size x="70" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-69" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CmdDruid_mini:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdCome" inherits="UIPanelButtonTemplate" text="Come">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="-65" y="-95" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("come");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdPause" inherits="UIPanelButtonTemplate" text="Pause">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-167" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetPause();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdUnpause" inherits="UIPanelButtonTemplate" text="Unpause">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="65" y="-167" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetUnpause();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdComeStay" inherits="UIPanelButtonTemplate" text="Come-S">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-95" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("comestay");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdComeToggle" inherits="UIPanelButtonTemplate" text="Come-T">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="65" y="-95" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("cometoggle");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdPull" inherits="UIPanelButtonTemplate" text="Pull">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-119" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("pull");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdPullBack" inherits="UIPanelButtonTemplate" text="Pull-B">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="65" y="-119" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("pull back");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdStay" inherits="UIPanelButtonTemplate" text="Stay">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="-65" y="-119" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("stay");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdAOE" inherits="UIPanelButtonTemplate" text="AoE">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="-65" y="-143" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("aoe");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdStart" inherits="UIPanelButtonTemplate" text="Start">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="65" y="-143" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("start");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdStop" inherits="UIPanelButtonTemplate" text="Stop">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-143" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("stop");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdUse" inherits="UIPanelButtonTemplate" text="Use">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="-65" y="-167" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("use");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="ToggleSUB" inherits="UIPanelButtonTemplate" text="-">
+				<Size x="30" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-82" y="-191" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ToggleSUB();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="ToggleADD" inherits="UIPanelButtonTemplate" text="+">
+				<Size x="30" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="17" y="-191" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ToggleADD();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="ToggleMode_mini" inherits="UIPanelButtonTemplate" text="Mode">
+				<Size x="68" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-32" y="-191" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Button>
+
+			<Button name="ToggleAOE_mini" inherits="UIPanelButtonTemplate" text="AoE">
+				<Size x="68" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-32" y="-191" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						ToggleAOE_mini:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="ToggleTotems_mini" inherits="UIPanelButtonTemplate" text="Totems">
+				<Size x="68" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-32" y="-191" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						ToggleTotems_mini:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="helm_mini" inherits="UIPanelButtonTemplate" text="Helm">
+				<Size x="68" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-32" y="-191" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						helm_mini:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="cloak_mini" inherits="UIPanelButtonTemplate" text="Cloak">
+				<Size x="68" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-32" y="-191" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						cloak_mini:Hide();
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdToggle" inherits="UIPanelButtonTemplate" text="Toggle">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="65" y="-191" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetToggle();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<!-- Commands end -->
+
+			<!-- mark configuration -->
+
+			<Button name="SetMarkADD" inherits="UIPanelButtonTemplate" text="+">
+				<Size x="30" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="64" y="-233" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						MarkADD();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="SetMarkSUB" inherits="UIPanelButtonTemplate" text="-">
+				<Size x="30" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-64" y="-233" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						MarkSUB();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="ccmark_mini" inherits="UIPanelButtonTemplate" text="CC Mark">
+				<Size x="95" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-233" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ShowMark();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="focusmark_mini" inherits="UIPanelButtonTemplate" text="Focus Mark">
+				<Size x="95" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-233" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						focusmark_mini:Hide();
+					</OnLoad>
+					<OnClick>
+						ShowMark();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotCCMoon" inherits="UIPanelButtonTemplate" text="Moon">
+				<Size x="40" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-80" y="-259" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetMark(self, "moon");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotCCStar" inherits="UIPanelButtonTemplate" text="Star">
+				<Size x="40" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-40" y="-259" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetMark(self, "star");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotCCCircle" inherits="UIPanelButtonTemplate" text="Circle">
+				<Size x="40" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-259" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetMark(self, "circle");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotCCDiamond" inherits="UIPanelButtonTemplate" text="Diamd">
+				<Size x="40" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="40" y="-259" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetMark(self, "diamond");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotCCTriangle" inherits="UIPanelButtonTemplate" text="Trian">
+				<Size x="40" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-80" y="-283" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetMark(self, "triangle");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotCCSquare" inherits="UIPanelButtonTemplate" text="Sqre">
+				<Size x="40" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="-40" y="-283" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetMark(self, "square");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBoCCCross" inherits="UIPanelButtonTemplate" text="Cross">
+				<Size x="40" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-283" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetMark(self, "cross");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotCCSkull" inherits="UIPanelButtonTemplate" text="Skull">
+				<Size x="40" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="40" y="-283" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetMark(self, "skull");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotCCDiamond" inherits="UIPanelButtonTemplate" text="Clear">
+				<Size x="40" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="80" y="-259" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ClearMark();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="PartyBotCCSkull" inherits="UIPanelButtonTemplate" text="Clear!">
+				<Size x="40" y="25" />
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="80" y="-283" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ClearAllMark();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<!--  bottom close button -->
+
+			<Button name="CloseButton" inherits="UIPanelButtonTemplate" text="Close">
+				<Size x="50" y="25" />
+				<Anchors>
+					<Anchor point="BOTTOM">
+						<Offset>
+							<AbsDimension x="-25" y="-2" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						CloseFrame();
+					</OnClick>
+				</Scripts>
+			</Button>
+			
+			<!--  frame change button -->
+
+			<Button name="FrameButton" inherits="UIPanelButtonTemplate" text="Full UI">
+				<Size x="50" y="25" />
+				<Anchors>
+					<Anchor point="BOTTOM">
+						<Offset>
+							<AbsDimension x="25" y="-2" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ChangeFrame();
+					</OnClick>
+				</Scripts>
+			</Button>			
+
+		</Frames>
+	</Frame>
+
+	<!--  Ultramini version -->
+	<Frame name="CCPFrameUltramini" parent="UIParent" toplevel="true" enableMouse="true" movable="true">
+
+		<Scripts>
+			<OnLoad>CCPFrameUltramini:RegisterForDrag("LeftButton");CCPFrameUltramini:Hide();this:RegisterEvent("PLAYER_LOGIN");</OnLoad>
+			<OnDragStart>CCPFrameUltramini:StartMoving();</OnDragStart>
+			<OnDragStop>CCPFrameUltramini:StopMovingOrSizing();</OnDragStop>
+		</Scripts>
+
+		<Size x="214" y="126" />
+
+		<Anchors>
+			<Anchor point="TOP">
+				<Offset>
+					<AbsDimension x="0" y="-40" />
+				</Offset>
+			</Anchor>
+		</Anchors>
+
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="4" right="4" top="4" bottom="4" />
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="32" />
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="16" />
+			</EdgeSize>			
+			<Color r="0" g="0" b="0" a="0.7" />
+			<BorderColor r="1" g="1" b="1" a="0.3" />
+		</Backdrop>
+
+		<!-- overlay labels layer for below buttons frame-->
+
+		<Layers>
+			<!-- string for buttons -->
+			<Layer level="OVERLAY">
+								
+				<!-- <FontString name="ControlPanel" inherits="GameFontHighlight" text="Companions Control Panel">
+					<Size x="220" y="10" />
+					<Anchors>
+						<Anchor  point="CENTER" relativePoint="TOP">
+							<Offset>
+								<AbsDimension x="0" y="-5" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString> -->
+			
+				
+			</Layer>
+		</Layers>
+		
+		<!-- buttons frame -->
+
+		<Frames>
+
+			<!-- Commands start -->
+			<Button name="CmdCome" inherits="UIPanelButtonTemplate" text="Come">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="-65" y="-12" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("come");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdPause" inherits="UIPanelButtonTemplate" text="Pause">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-84" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetPause();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdUnpause" inherits="UIPanelButtonTemplate" text="Unpause">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="65" y="-84" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetUnpause();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdComeStay" inherits="UIPanelButtonTemplate" text="Come-S">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-12" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("comestay");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdComeToggle" inherits="UIPanelButtonTemplate" text="Come-T">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="65" y="-12" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("cometoggle");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdPull" inherits="UIPanelButtonTemplate" text="Pull">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-36" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("pull");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdPullBack" inherits="UIPanelButtonTemplate" text="Pull-B">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="65" y="-36" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("pull back");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdStay" inherits="UIPanelButtonTemplate" text="Stay">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="-65" y="-36" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("stay");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdAOE" inherits="UIPanelButtonTemplate" text="AoE">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="-65" y="-60" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("aoe");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdStart" inherits="UIPanelButtonTemplate" text="Start">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="65" y="-60" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("start");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdStop" inherits="UIPanelButtonTemplate" text="Stop">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="-60" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("stop");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="CmdUse" inherits="UIPanelButtonTemplate" text="Use">
+				<Size x="65" y="25" />
+				<Anchors>
+					<Anchor  point="TOP">
+						<Offset>
+							<AbsDimension x="-65" y="-84" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SetCommand("use");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<!--  bottom close button -->
+
+			<Button name="CloseButton" inherits="UIPanelButtonTemplate" text="Close">
+				<Size x="50" y="25" />
+				<Anchors>
+					<Anchor point="BOTTOM">
+						<Offset>
+							<AbsDimension x="-25" y="-10" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						CloseFrame();
+					</OnClick>
+				</Scripts>
+			</Button>
+			
+			<!--  frame change button -->
+
+			<Button name="FrameButton" inherits="UIPanelButtonTemplate" text="Full UI">
+				<Size x="50" y="25" />
+				<Anchors>
+					<Anchor point="BOTTOM">
+						<Offset>
+							<AbsDimension x="25" y="-10" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ChangeFrame();
+					</OnClick>
+				</Scripts>
+			</Button>			
+
+		</Frames>
+	</Frame>
+</Ui>

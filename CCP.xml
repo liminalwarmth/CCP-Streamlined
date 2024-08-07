@@ -2882,7 +2882,7 @@
 			
 			<!--  frame change button -->
 
-			<Button name="FrameButton" inherits="UIPanelButtonTemplate" text="Full UI">
+			<Button name="FrameButton" inherits="UIPanelButtonTemplate" text="UltMini">
 				<Size x="50" y="25" />
 				<Anchors>
 					<Anchor point="BOTTOM">
@@ -2957,7 +2957,7 @@
 				</FontString> -->
 			
 				<FontString name="version_ultramini" inherits="GameFontHighlightSmallOutline" text="Mode: Test">
-					<Size x="50" y="20" />
+					<Size x="70" y="20" />
 					<Anchors>
 						<Anchor point="BOTTOM">
 							<Offset>
@@ -3174,7 +3174,7 @@
 				<Anchors>
 					<Anchor point="BOTTOM">
 						<Offset>
-							<AbsDimension x="-25" y="-10" />
+							<AbsDimension x="15" y="-10" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -3192,7 +3192,7 @@
 				<Anchors>
 					<Anchor point="BOTTOM">
 						<Offset>
-							<AbsDimension x="25" y="-10" />
+							<AbsDimension x="65" y="-10" />
 						</Offset>
 					</Anchor>
 				</Anchors>

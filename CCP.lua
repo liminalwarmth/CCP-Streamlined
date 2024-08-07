@@ -280,6 +280,10 @@ Classes = { "warrior" , "paladin", "hunter", "rogue", "priest", "shaman", "mage"
 AddClass = "warrior"
 ClassItr = 1
 function SetClassADD()
+    if not Reputation then
+        -- Say("Reputation not initialized!")
+        SetReputation()
+    end
 	-- Classes = { "warrior" , "paladin", "hunter", "rogue", "priest", "shaman", "mage", "warlock", "druid" }
 	Classes = {}
 	if UnitFactionGroup("player") == "Alliance" then
@@ -362,6 +366,10 @@ function SetClassADD()
 end
 
 function SetClassSUB()
+    if not Reputation then
+        -- Say("Reputation not initialized!")
+        SetReputation()
+    end
 	-- Classes = { "warrior" , "paladin", "hunter", "rogue", "priest", "shaman", "mage", "warlock", "druid" }
 	Classes = {}
 	if UnitFactionGroup("player") == "Alliance" then
@@ -1628,6 +1636,7 @@ end
 function CloseFrame()
 	CCPFrame:Hide();
 	CCPFrameMini:Hide();
+	CCPFrameUltramini:Hide();
 end
 
 function OpenFrame()
@@ -1635,6 +1644,7 @@ function OpenFrame()
 	DEFAULT_CHAT_FRAME:RegisterEvent('CHAT_MSG_SYSTEM')
 	CCPFrame:Show();
 	CCPFrameMini:Hide();
+	CCPFrameUltramini:Hide();
 end
 
 -- minimap button 
@@ -1651,6 +1661,10 @@ function ChangeFrame()
 		CCPCurrentFrame = 1
 	elseif CCPCurrentFrame == 1 then
 		CCPFrameMini:Hide();
+		CCPFrameUltramini:Show();
+		CCPCurrentFrame = 2
+	elseif CCPCurrentFrame == 2 then
+		CCPFrameUltramini:Hide();
 		CCPFrame:Show();
 		CCPCurrentFrame = 0
 	end
@@ -1669,12 +1683,14 @@ function CCPButtonFrame_Init()
 			CCPFrame:Show();
 		else
 			CCPFrame:Hide();
+			CCPFrameUltramini:Hide();
 		end
 	elseif CCPCurrentFrame == 1 then
 		if CCPFrameMiniShown then
 			CCPFrameMini:Show();
 		else
 			CCPFrameMini:Hide();
+			CCPFrameUltramini:Hide();
 		end
 	end
 	SetCmdCheckmark()
@@ -1703,7 +1719,11 @@ function SetReputation()
 		end
 	end
 	
-	-- DEFAULT_CHAT_FRAME:AddMessage("Your reputation with the following factions:")
+   if not Reputation then
+        Say("You have no reputations - call Ace!") 
+        return
+    end
+	-- DEFAULT_CHAT_FRAME:AddMessage("You can hire from these factions:")
     -- for faction, _ in pairs(Reputation) do
         -- DEFAULT_CHAT_FRAME:AddMessage(faction)
     -- end
@@ -1735,7 +1755,7 @@ end
 
 function CCPButtonFrame_OnEnter()
     GameTooltip:SetOwner(this, "ANCHOR_LEFT");
-    GameTooltip:SetText("Companions Control Panel v3.0\n Press Left Click to Open/Close \n Hold Right Click to move the icon");
+    GameTooltip:SetText("Companions Control Panel\nPress Left Click to Open/Close\nHold Right Click to move the icon");
     GameTooltip:Show();
 end
 
@@ -1812,4 +1832,8 @@ function JoinWorld()
 	if (name ~= "World") then
 		JoinChannelByName("World", nil, ChatFrame1:GetID(), 0)
 	end
+end
+
+function Say(text)	
+	DEFAULT_CHAT_FRAME:AddMessage(text)
 end

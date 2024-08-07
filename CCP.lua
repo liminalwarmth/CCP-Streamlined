@@ -1837,3 +1837,32 @@ end
 function Say(text)	
 	DEFAULT_CHAT_FRAME:AddMessage(text)
 end
+
+-- Key Press Modifiers
+
+local function UpdateVersionText()
+    local text = ""
+	if IsAltKeyDown() and IsControlKeyDown() then
+		text = "Mode: Healer"
+    elseif IsControlKeyDown() then
+        text = "Mode: Tank"
+    elseif IsAltKeyDown() then
+        text = "Mode: MDPS"
+    elseif IsShiftKeyDown() then
+        text = "Mode: RDPS"
+    end
+    if version_ultramini then
+        version_ultramini:SetText(text)
+    end
+end
+
+local function OnUpdate(self, elapsed)
+    UpdateVersionText()
+end
+
+-- New OnLoad function (only for ultrashort version)
+function CCPFrame_OnLoad()
+    if CCPFrameUltramini then
+        CCPFrameUltramini:SetScript("OnUpdate", OnUpdate)
+    end
+end

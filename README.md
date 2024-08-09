@@ -6,7 +6,7 @@ This is a modified version of Ace's original Companions Control Panel addon for 
 
 It is _strongly_ recommended that you use this addon alongside my [Nyctermoon Context Menus addon](https://github.com/liminalwarmth/NyctermoonContextMenus) which makes the buttons hidden by the ultracompact mode easily available from a right click menu on companions.
 
-![Ultramini Mode](img/ultramini.png)
+![Ultramini Mode](img/Ultramini.png)
 
 ## CCP+ Features
 

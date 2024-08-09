@@ -110,8 +110,12 @@ function ChangeCmdCheckmark_mini()
 	cmdCheckmarkState = CmdInclude_mini:GetChecked()
 end
 
+-- Edited for ultramini handling
 function SetCommand(arg)
-	if cmdCheckmarkState then 
+	if version_ultramini then
+		local role = GetCurrentRole()
+		SendChatMessage(CMD_GENERAL .. arg .. " " .. role);
+	elseif cmdCheckmarkState then 
 		SendChatMessage(CMD_GENERAL .. arg .. " " .. AddCmd);
 	elseif AddCmd ~= "" then
 		SendChatMessage(CMD_GENERAL .. arg .. " " .. AddCmd .. " not");
@@ -121,7 +125,10 @@ function SetCommand(arg)
 end
 
 function SetPause()
-	if cmdCheckmarkState then 
+	if version_ultramini then
+		local role = GetCurrentRole()
+		SendChatMessage(CMD_GENERAL .. " pause 300 " .. role);
+	elseif cmdCheckmarkState then 
 		SendChatMessage(CMD_GENERAL .. " pause 300 " .. AddCmd);
 	elseif AddCmd ~= "" then
 		SendChatMessage(CMD_GENERAL .. " pause 300 " .. AddCmd .. " not");
@@ -131,7 +138,10 @@ function SetPause()
 end
 
 function SetUnpause()
-	if cmdCheckmarkState then 
+	if version_ultramini then
+		local role = GetCurrentRole()
+		SendChatMessage(CMD_GENERAL .. " unpause " .. role);
+	elseif cmdCheckmarkState then 
 		SendChatMessage(CMD_GENERAL .. " unpause " .. AddCmd);
 	elseif AddCmd ~= "" then
 		SendChatMessage(CMD_GENERAL .. " unpause " .. AddCmd .. " not");
@@ -1842,17 +1852,35 @@ end
 
 local function UpdateVersionText()
     local text = ""
-	if IsAltKeyDown() and IsControlKeyDown() then
-		text = "Mode: Healer"
+    if IsAltKeyDown() and IsShiftKeyDown() then
+        text = "|cFF69CCF0Mode: RDPS|r"
+    elseif IsControlKeyDown() and IsShiftKeyDown() then
+        text = "|cFFFFF569Mode: MDPS|r"
     elseif IsControlKeyDown() then
-        text = "Mode: Tank"
+        text = "|cFFC79C6EMode: TANK|r"
     elseif IsAltKeyDown() then
-        text = "Mode: MDPS"
+        text = "|cFFFFFFA0Mode: HEALER|r"
     elseif IsShiftKeyDown() then
-        text = "Mode: RDPS"
+        text = "|cFFFF0000Mode: DPS|r"
     end
     if version_ultramini then
         version_ultramini:SetText(text)
+    end
+end
+
+function GetCurrentRole()
+    if IsAltKeyDown() and IsShiftKeyDown() then
+        return "rdps"
+	elseif IsControlKeyDown() and IsShiftKeyDown() then
+		return "mdps"
+	elseif IsControlKeyDown() then
+        return "tank"
+    elseif IsAltKeyDown() then
+        return "healer"
+    elseif IsShiftKeyDown() then
+        return "dps"
+    else
+        return ""
     end
 end
 

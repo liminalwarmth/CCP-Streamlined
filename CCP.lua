@@ -1740,27 +1740,33 @@ function SetReputation()
 end
 
 function CCPButtonFrame_Toggle()
-	if CCPCurrentFrame == 0 then
-		if(CCPFrame:IsVisible()) then
-			CCPFrame:Hide();
-			CCPFrameShown = false;
-		else
-			SetReputation()
-			CCPFrame:Show();
-			CCPFrameShown = true;
-		end	
-	elseif CCPCurrentFrame == 1 then
-		if(CCPFrameMini:IsVisible()) then
-			CCPFrameMini:Hide();
-			CCPFrameMiniShown = false;
-		else
-			CCPFrameMini:Show();
-			CCPFrameMiniShown = true;
-		end
-	end
-		
-	SetCmdCheckmark()
-	CCPButtonFrame_Init();
+    if CCPCurrentFrame == 0 then
+        if(CCPFrame:IsVisible()) then
+            CCPFrame:Hide();
+            CCPFrameShown = false;
+        else
+            SetReputation()
+            CCPFrame:Show();
+            CCPFrameShown = true;
+        end 
+    elseif CCPCurrentFrame == 1 then
+        if(CCPFrameMini:IsVisible()) then
+            CCPFrameMini:Hide();
+            CCPFrameMiniShown = false;
+        else
+            CCPFrameMini:Show();
+            CCPFrameMiniShown = true;
+        end
+    elseif CCPCurrentFrame == 2 then
+        if(CCPFrameUltramini:IsVisible()) then
+            CCPFrameUltramini:Hide();
+        else
+            CCPFrameUltramini:Show();
+        end
+    end
+        
+    SetCmdCheckmark()
+    CCPButtonFrame_Init();
 end
 
 function CCPButtonFrame_OnEnter()

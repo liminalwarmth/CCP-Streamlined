@@ -32,6 +32,7 @@
 					<OnLoad>
 						this:RegisterForDrag("RightButton");
 						this.dragme = false;
+						CCP_OnLoad()
 					</OnLoad>
 					<OnDragStart>
 						this.dragme = true;
@@ -53,6 +54,9 @@
 					<OnLeave>
 						GameTooltip:Hide();
 					</OnLeave>
+					<OnEvent>
+						CCP_OnEvent(event)
+    				</OnEvent>
 				</Scripts>
 			</Button>
 		</Frames>

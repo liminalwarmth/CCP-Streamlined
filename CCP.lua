@@ -1,4 +1,3 @@
--- Companions Control Panel addon by Leontiesh (Ace) and WZ
 BINDING_HEADER_CCP = "Companions Control Panel";
 BINDING_NAME_CP = "Show/Hide CCP";
 
@@ -9,6 +8,14 @@ CMD_SET = ".z set ";
 CMD_TOGGLE_HELM = ".z togglehelm ";
 CMD_TOGGLE_CLOAK = ".z togglecloak ";
 CMD_GENERAL = ".z ";
+
+CCP_SavedVariables = CCP_SavedVariables or { lastFrame = 0, wasVisible = false }
+
+-- minimap button 
+local CCPFrameShown = true -- show frame by default
+local CCPFrameMiniShown = false
+local CCPCurrentFrame = 0
+local CCPButtonPosition = 268
 
 AddCmd = ""
 CmdItr = 1
@@ -1650,36 +1657,52 @@ function CloseFrame()
 end
 
 function OpenFrame()
-	DEFAULT_CHAT_FRAME:AddMessage("Loading Companions Control Panel...");
-	DEFAULT_CHAT_FRAME:RegisterEvent('CHAT_MSG_SYSTEM')
-	CCPFrame:Show();
-	CCPFrameMini:Hide();
-	CCPFrameUltramini:Hide();
+    DEFAULT_CHAT_FRAME:AddMessage("Loading Companions Control Panel...");
+    DEFAULT_CHAT_FRAME:RegisterEvent('CHAT_MSG_SYSTEM')
+    
+    CCPCurrentFrame = CCP_SavedVariables.lastFrame or 0
+    local wasVisible = CCP_SavedVariables.wasVisible or false
+    
+    if wasVisible then
+        if CCPCurrentFrame == 0 then
+            CCPFrame:Show()
+            CCPFrameMini:Hide()
+            CCPFrameUltramini:Hide()
+        elseif CCPCurrentFrame == 1 then
+            CCPFrame:Hide()
+            CCPFrameMini:Show()
+            CCPFrameUltramini:Hide()
+        elseif CCPCurrentFrame == 2 then
+            CCPFrame:Hide()
+            CCPFrameMini:Hide()
+            CCPFrameUltramini:Show()
+        end
+    end
+    
+    SetCmdCheckmark()
+	-- Save current state
+    SaveCCPVariables()
 end
 
--- minimap button 
-local CCPFrameShown = true -- show frame by default
-local CCPFrameMiniShown = false
-local CCPCurrentFrame = 0
-local CCPButtonPosition = 268
-
 function ChangeFrame()
-
-	if CCPCurrentFrame == 0 then
-		CCPFrame:Hide();
-		CCPFrameMini:Show();
-		CCPCurrentFrame = 1
-	elseif CCPCurrentFrame == 1 then
-		CCPFrameMini:Hide();
-		CCPFrameUltramini:Show();
-		CCPCurrentFrame = 2
-	elseif CCPCurrentFrame == 2 then
-		CCPFrameUltramini:Hide();
-		CCPFrame:Show();
-		CCPCurrentFrame = 0
-	end
-	
-	SetCmdCheckmark()
+    if CCPCurrentFrame == 0 then
+        CCPFrame:Hide();
+        CCPFrameMini:Show();
+        CCPCurrentFrame = 1
+    elseif CCPCurrentFrame == 1 then
+        CCPFrameMini:Hide();
+        CCPFrameUltramini:Show();
+        CCPCurrentFrame = 2
+    elseif CCPCurrentFrame == 2 then
+        CCPFrameUltramini:Hide();
+        CCPFrame:Show();
+        CCPCurrentFrame = 0
+    end
+    
+    SetCmdCheckmark()
+    
+    -- Save current state
+    SaveCCPVariables()
 end
 
 function CCPButtonFrame_OnClick()
@@ -1693,15 +1716,25 @@ function CCPButtonFrame_Init()
 			CCPFrame:Show();
 		else
 			CCPFrame:Hide();
-			CCPFrameUltramini:Hide();
 		end
+		CCPFrameMini:Hide();
+		CCPFrameUltramini:Hide();
 	elseif CCPCurrentFrame == 1 then
 		if CCPFrameMiniShown then
 			CCPFrameMini:Show();
 		else
 			CCPFrameMini:Hide();
+		end
+		CCPFrame:Hide();
+		CCPFrameUltramini:Hide();
+	elseif CCPCurrentFrame == 2 then
+		if CCPFrameUltraminiShown then
+			CCPFrameUltramini:Show();
+		else
 			CCPFrameUltramini:Hide();
 		end
+		CCPFrame:Hide();
+		CCPFrameMini:Hide();
 	end
 	SetCmdCheckmark()
 end
@@ -1740,6 +1773,7 @@ function SetReputation()
 end
 
 function CCPButtonFrame_Toggle()
+    local isVisible = false
     if CCPCurrentFrame == 0 then
         if(CCPFrame:IsVisible()) then
             CCPFrame:Hide();
@@ -1748,6 +1782,7 @@ function CCPButtonFrame_Toggle()
             SetReputation()
             CCPFrame:Show();
             CCPFrameShown = true;
+            isVisible = true
         end 
     elseif CCPCurrentFrame == 1 then
         if(CCPFrameMini:IsVisible()) then
@@ -1756,17 +1791,24 @@ function CCPButtonFrame_Toggle()
         else
             CCPFrameMini:Show();
             CCPFrameMiniShown = true;
+            isVisible = true
         end
     elseif CCPCurrentFrame == 2 then
         if(CCPFrameUltramini:IsVisible()) then
             CCPFrameUltramini:Hide();
+            CCPFrameUltraminiShown = false;
         else
             CCPFrameUltramini:Show();
+            CCPFrameUltraminiShown = true;
+            isVisible = true
         end
     end
         
     SetCmdCheckmark()
     CCPButtonFrame_Init();
+    
+    -- Save current state
+    SaveCCPVariables()
 end
 
 function CCPButtonFrame_OnEnter()
@@ -1898,5 +1940,20 @@ end
 function CCPFrame_OnLoad()
     if CCPFrameUltramini then
         CCPFrameUltramini:SetScript("OnUpdate", OnUpdate)
+    end
+end
+
+function SaveCCPVariables()
+    CCP_SavedVariables.lastFrame = CCPCurrentFrame
+    CCP_SavedVariables.wasVisible = CCPFrame:IsVisible() or CCPFrameMini:IsVisible() or CCPFrameUltramini:IsVisible()
+end
+
+function CCP_OnLoad()
+    this:RegisterEvent("VARIABLES_LOADED")
+end
+
+function CCP_OnEvent(event)
+    if event == "VARIABLES_LOADED" then
+        OpenFrame()
     end
 end

@@ -2,6 +2,7 @@
 ## Title: |cffeda55fCompanions|r Control Panel - Streamlined Edition
 ## Notes: Companions Control Panel for the NycterMoon server with streamlined UI. Original addon by Leontiesh (Ace).
 ## Author: Liminal_Warmth
+## SavedVariables: CCP_SavedVariables
 
 CCP.lua
 CCP.xml

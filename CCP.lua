@@ -1654,6 +1654,8 @@ function CloseFrame()
 	CCPFrame:Hide();
 	CCPFrameMini:Hide();
 	CCPFrameUltramini:Hide();
+
+	SaveCCPVariables()
 end
 
 function OpenFrame()
